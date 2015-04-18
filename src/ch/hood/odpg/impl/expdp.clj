@@ -128,7 +128,7 @@
 								 (footer ctx)])))
 	([file exp-data :- ExpData]
 		(let [script (render-exp-script exp-data)]
-			(spit file exp-data))))
+			(spit file script))))
 
 (comment
 	(def input {:schemas     {"SIMON1"
