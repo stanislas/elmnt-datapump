@@ -14,10 +14,8 @@ import clojure.lang.PersistentHashMap;
 import clojure.lang.PersistentHashSet;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static ch.hood.odpg.api.ClojureUtils.keyword;
 
@@ -86,7 +84,6 @@ public class ExpDataBuilder implements Directory, FilePrefix, Render, SchemaChoi
 		PersistentHashMap schema = PersistentHashMap.create(SUBQUERY_FILTERS, pSubqueryFilters);
 		expData = assocNewSchema(schemaName, schema);
 		return this;
-
 	}
 
 	@Override
