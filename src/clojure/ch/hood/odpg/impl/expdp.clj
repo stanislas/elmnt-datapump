@@ -10,7 +10,8 @@
 	(str "'" string "'"))
 
 (def ExpData
-	{:schemas                      {s/Str {(s/optional-key :tables)            #{s/Str}
+	{:schemas                      {s/Str {(s/optional-key :include-tables)    #{s/Str}
+																				 (s/optional-key :exclude-tables)    #{s/Str}
 																				 (s/optional-key :subquery-filters)  {s/Str s/Str}
 																				 (s/optional-key :partition-filters) {s/Str s/Str}}}
 	 :file-prefix                  s/Str
@@ -28,7 +29,7 @@
 				 ");")))
 
 (defn render-table-metadatafile
-	([ctx _ table-names]
+	([ctx filter-type table-names]
 	 (let [table-names (map double-quote table-names)
 				 table-names (str/join ", " table-names)]
 		 (str "dbms_datapump.metadata_filter("
@@ -39,8 +40,10 @@
 					");")))
 	([ctx schemas]
 		;; if we come here, we have the guarantee of a single schema mode. see validate.
-	 (when-let [tables (:tables (get schemas (-> schemas keys first)))]
-		 (render-table-metadatafile ctx :> tables))))
+	 (let [filter-types [:include-tables :exclude-tables]
+				 tables ((apply juxt filter-types) (get schemas (-> schemas keys first)))
+				 tables (map #(render-table-metadatafile ctx %1 %2) filter-types tables)]
+		 (str/join "\n" tables))))
 
 (defn render-subquery-datafilter [ctx schema-name table-name subquery]
 	(str "dbms_datapump.data_filter("
@@ -113,7 +116,8 @@
 (defn validate [exp-data]
 	(let [schemas (:schemas exp-data)
 				schema-count (-> schemas keys count)
-				table-filter-exists (some (comp #(contains? % :tables) second) schemas)]
+				table-filter-exists (some (comp #(or (contains? % :include-tables)
+																						 (contains? % :exclude-tables)) second) schemas)]
 		(if (and table-filter-exists (> schema-count 1))
 			(throw (IllegalArgumentException. ":tables filter is allowed only on single schema exp-data.")))
 		exp-data))
@@ -132,10 +136,11 @@
 
 (comment
 	(def input {:schemas     {"SIMON1"
-														{:tables #{"CUSTOMER" "LC_CONFIGURATION"}
+														{:include-tables #{"CUSTOMER" "LC_CONFIGURATION"}
+														 :exclude-tables #{"OP_BIN_ARCHIVE"}
 														 :subquery-filters
-																		 {"CUSTOMER"         "WHERE ID = 3600233"
-																			"LC_CONFIGURATION" "WHERE CUSTOMER_ID = 3600233"}}}
+																						 {"CUSTOMER"         "WHERE ID = 3600233"
+																							"LC_CONFIGURATION" "WHERE CUSTOMER_ID = 3600233"}}}
 							:file-prefix "simon1"
 							:directory   "DATA_PUMP_DIR"})
 

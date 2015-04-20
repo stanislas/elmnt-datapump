@@ -26,7 +26,8 @@ public class ExpDataBuilder implements Directory, FilePrefix, Render, SchemaChoi
 	public static final String CH_HOOD_ODPG_IMPL_EXPDP = "ch.hood.odpg.impl.expdp";
 
 	public static final Keyword SCHEMAS = keyword(":schemas");
-	public static final Keyword TABLES = keyword(":tables");
+	public static final Keyword INCLUDE_TABLES = keyword(":include-tables");
+	public static final Keyword EXCLUDE_TABLES = keyword(":exclude-tables");
 	public static final Keyword SUBQUERY_FILTERS = keyword(":subquery-filters");
 	public static final Keyword PARTITION_FILTERS = keyword(":partition-filters");
 	public static final Keyword FILE_PREFIX = keyword(":file-prefix");
@@ -87,12 +88,21 @@ public class ExpDataBuilder implements Directory, FilePrefix, Render, SchemaChoi
 	}
 
 	@Override
-	public Render withSchema(String schemaName, List<String> tables, Map<String, String> subqueryFilters) {
-		PersistentHashSet pTables = PersistentHashSet.create(tables);
+	public Render withSchema(String schemaName, List<String> includeTables, List<String> excludeTables, Map<String, String> subqueryFilters) {
 		IPersistentMap pSubqueryFilters = PersistentHashMap.create(subqueryFilters);
-		PersistentHashMap schema = PersistentHashMap.create(TABLES, pTables, SUBQUERY_FILTERS, pSubqueryFilters);
+		IPersistentMap schema = PersistentHashMap.create(SUBQUERY_FILTERS, pSubqueryFilters);
+		schema = assocTableList(schema, INCLUDE_TABLES, includeTables);
+		schema = assocTableList(schema, EXCLUDE_TABLES, excludeTables);
 		expData = assocNewSchema(schemaName, schema);
 		return this;
+	}
+
+	private IPersistentMap assocTableList(IPersistentMap schema, Keyword keyword, List<String> tables) {
+		if (tables != null && !tables.isEmpty()) {
+			PersistentHashSet tableSet = PersistentHashSet.create(tables);
+			return schema.assoc(keyword, tableSet);
+		}
+		return schema;
 	}
 
 	private IPersistentMap assocNewSchema(String schemaName, IPersistentMap schema) {

@@ -5,5 +5,5 @@ import java.util.Map;
 
 public interface SchemaChoice {
 	Schemas addSchema(String schema, Map<String, String> tableSubqueries);
-	Render withSchema(String schema, List<String> tables, Map<String, String> tableSubqueries);
+	Render withSchema(String schema, List<String> includeTables, List<String> excludeTables, Map<String, String> tableSubqueries);
 }
