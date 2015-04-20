@@ -74,25 +74,6 @@
 		(str metadata-schema-filter "\n" table-metadata-filter "\n"
 				 (str/join "\n" data-filters))))
 
-(defn file-type-suffix [file-type]
-	(case file-type
-		:log-file ".log"
-		:dump-file ".dump"
-		))
-
-(defn file-type-filetype [file-type]
-	(case file-type
-		:log-file "dbms_datapump.KU$_FILE_TYPE_LOG_FILE"
-		:dump-file "dbms_datapump.KU$_FILE_TYPE_DUMP_FILE"))
-
-(defn render-add-file [directory file-type file-basename]
-	(str "dbms_datapump.add_file("
-			 "handle => handle, "
-			 "filename => '" (str file-basename (file-type-suffix file-type)) "', "
-			 "directory => '" directory "', "
-			 "filetype => " (file-type-filetype file-type) ");"
-			 ))
-
 (defn render-today []
 	(let [cal (Calendar/getInstance)]
 		(str (.get cal Calendar/YEAR) "_"
@@ -108,8 +89,8 @@
 							 "begin"
 							 (str "handle := dbms_datapump.open('EXPORT', 'SCHEMA'"
 										(if (nil? remote-link) "" (str ", remote_link => " (single-quote remote-link))) ");")
-							 (render-add-file directory :dump-file file-basename)
-							 (render-add-file directory :log-file (str file-basename "_exp"))
+							 (c/render-add-file directory :dump-file file-basename)
+							 (c/render-add-file directory :exp-log-file file-basename)
 							 ])))
 
 (defn validate [exp-data]
