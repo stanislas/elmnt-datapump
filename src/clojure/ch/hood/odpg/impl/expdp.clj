@@ -28,6 +28,11 @@
 				 "value => 'IN (" schema-names ")'"
 				 ");")))
 
+(defn filter-type-operator [filter-type]
+	(case filter-type
+		:include-tables "IN"
+		:exclude-tables "NOT IN"))
+
 (defn render-table-metadatafile
 	([ctx filter-type table-names]
 	 (let [table-names (map double-quote table-names)
@@ -35,14 +40,15 @@
 		 (str "dbms_datapump.metadata_filter("
 					"handle => handle, "
 					"name => 'NAME_EXPR', "
-					"value => 'IN (" table-names ")', "
+					"value => '" (filter-type-operator filter-type) " (" table-names ")', "
 					"object_type => 'TABLE'"
 					");")))
 	([ctx schemas]
 		;; if we come here, we have the guarantee of a single schema mode. see validate.
 	 (let [filter-types [:include-tables :exclude-tables]
 				 tables ((apply juxt filter-types) (get schemas (-> schemas keys first)))
-				 tables (map #(render-table-metadatafile ctx %1 %2) filter-types tables)]
+				 tables (map #(when (not (nil? %2)) (render-table-metadatafile ctx %1 %2)) filter-types tables)
+				 tables (filter (comp not nil?) tables)]
 		 (str/join "\n" tables))))
 
 (defn render-subquery-datafilter [ctx schema-name table-name subquery]
