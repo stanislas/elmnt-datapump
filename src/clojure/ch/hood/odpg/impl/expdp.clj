@@ -1,7 +1,8 @@
 (ns ch.hood.odpg.impl.expdp
-	(:require [clojure.string :as str]
+	(:require [ch.hood.odpg.impl.common :as c]
+						[clojure.string :as str]
 						[schema.core :as s])
-	(:import (java.util Date Calendar)))
+	(:import (java.util Calendar)))
 
 (defn double-quote [string]
 	(str "''" string "''"))
@@ -111,14 +112,6 @@
 							 (render-add-file ctx directory :log-file (str file-basename "_exp"))
 							 ])))
 
-(defn render-footer [ctx]
-	(str/join "\n"
-						["dbms_datapump.start_job(handle => handle);"
-						 "dbms_datapump.wait_for_job(handle => handle, job_state => job_state);"
-						 "dbms_output.put_line('Job finished with state ' || job_state);"
-						 "end;"
-						 "/"]))
-
 (defn validate [exp-data]
 	(let [schemas (:schemas exp-data)
 				schema-count (-> schemas keys count)
@@ -135,7 +128,7 @@
 			(str/join "\n"
 								[(render-header ctx exp-data)
 								 (render-schemas ctx exp-data)
-								 (render-footer ctx)])))
+								 (c/render-footer)])))
 	([file exp-data :- ExpData]
 		(let [script (render-exp-script exp-data)]
 			(spit file script))))
