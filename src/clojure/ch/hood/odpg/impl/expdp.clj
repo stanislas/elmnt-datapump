@@ -81,17 +81,16 @@
 				 (.get cal Calendar/DAY_OF_MONTH))))
 
 (defn render-header [{:keys [remote-link file-prefix directory]}]
-	(let [file-basename (str file-prefix "_" (render-today))]
-		(str/join "\n"
-							["declare"
-							 "handle number;"
-							 "job_state varchar2(50);"
-							 "begin"
-							 (str "handle := dbms_datapump.open('EXPORT', 'SCHEMA'"
-										(if (nil? remote-link) "" (str ", remote_link => " (single-quote remote-link))) ");")
-							 (c/render-add-file directory :dump-file file-basename)
-							 (c/render-add-file directory :exp-log-file file-basename)
-							 ])))
+	(str/join "\n"
+						["declare"
+						 "handle number;"
+						 "job_state varchar2(50);"
+						 "begin"
+						 (str "handle := dbms_datapump.open('EXPORT', 'SCHEMA'"
+									(if (nil? remote-link) "" (str ", remote_link => " (single-quote remote-link))) ");")
+						 (c/render-add-file directory :dump-file file-prefix)
+						 (c/render-add-file directory :exp-log-file file-prefix)
+						 ]))
 
 (defn validate [exp-data]
 	(let [schemas (:schemas exp-data)
