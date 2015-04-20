@@ -57,3 +57,13 @@
 						 "dbms_output.put_line('Job finished with state ' || job_state);"
 						 "end;"
 						 "/"]))
+
+(defn render-schema-metadatafilter [schemas]
+	(let [schema-names (keys schemas)
+				schema-names (map double-quote schema-names)
+				schema-names (str/join ", " schema-names)]
+		(str "dbms_datapump.metadata_filter("
+				 "handle => handle, "
+				 "name => 'SCHEMA_EXPR', "
+				 "value => 'IN (" schema-names ")'"
+				 ");")))

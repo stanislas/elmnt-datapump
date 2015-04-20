@@ -12,16 +12,6 @@
 	 :directory                    s/Str
 	 (s/optional-key :remote-link) s/Str})
 
-(defn render-schema-metadatafilter [schemas]
-	(let [schema-names (keys schemas)
-				schema-names (map c/double-quote schema-names)
-				schema-names (str/join ", " schema-names)]
-		(str "dbms_datapump.metadata_filter("
-				 "handle => handle, "
-				 "name => 'SCHEMA_EXPR', "
-				 "value => 'IN (" schema-names ")'"
-				 ");")))
-
 (defn filter-type-operator [filter-type]
 	(case filter-type
 		:include-tables "IN"
@@ -60,7 +50,7 @@
 			 (str/join "\n")))
 
 (defn render-schemas [{:keys [schemas]}]
-	(let [metadata-schema-filter (render-schema-metadatafilter schemas)
+	(let [metadata-schema-filter (c/render-schema-metadatafilter schemas)
 				table-metadata-filter (render-table-metadatafile schemas)
 				subquery-filters (into {} (map #(vector (first %) (:subquery-filters (second %))) schemas))
 				data-filters (map #(render-subqueries-datafilter (first %) (second %)) subquery-filters)]
