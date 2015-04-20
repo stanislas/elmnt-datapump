@@ -98,7 +98,7 @@
 				 (.get cal Calendar/MONTH) "_"
 				 (.get cal Calendar/DAY_OF_MONTH))))
 
-(defn header [ctx {:keys [remote-link file-prefix directory]}]
+(defn render-header [ctx {:keys [remote-link file-prefix directory]}]
 	(let [file-basename (str file-prefix "_" (render-today))]
 		(str/join "\n"
 							["declare"
@@ -108,10 +108,10 @@
 							 (str "handle := dbms_datapump.open('EXPORT', 'SCHEMA'"
 										(if (nil? remote-link) "" (str ", remote_link => " (single-quote remote-link))) ");")
 							 (render-add-file ctx directory :dump-file file-basename)
-							 (render-add-file ctx directory :log-file file-basename)
+							 (render-add-file ctx directory :log-file (str file-basename "_exp"))
 							 ])))
 
-(defn footer [ctx]
+(defn render-footer [ctx]
 	(str/join "\n"
 						["dbms_datapump.start_job(handle => handle);"
 						 "dbms_datapump.wait_for_job(handle => handle, job_state => job_state);"
@@ -133,9 +133,9 @@
 		(validate exp-data)
 		(let [ctx nil]
 			(str/join "\n"
-								[(header ctx exp-data)
+								[(render-header ctx exp-data)
 								 (render-schemas ctx exp-data)
-								 (footer ctx)])))
+								 (render-footer ctx)])))
 	([file exp-data :- ExpData]
 		(let [script (render-exp-script exp-data)]
 			(spit file script))))
