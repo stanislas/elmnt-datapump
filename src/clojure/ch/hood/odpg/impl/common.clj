@@ -1,6 +1,22 @@
 (ns ch.hood.odpg.impl.common
 	(:require [clojure.string :as str]))
 
+(defn double-quote [string]
+	(str "''" string "''"))
+
+(defn single-quote [string]
+	(str "'" string "'"))
+
+(defn render-datapump-operation [datapump-operation]
+	(case datapump-operation
+		:export "EXPORT"
+		:import "IMPORT"))
+
+(defn log-file-type [datapump-operation]
+	(case datapump-operation
+		:export :exp-log-file
+		:import :imp-log-file))
+
 (defn file-type-suffix [file-type]
 	(case file-type
 		:exp-log-file "_exp.log"
@@ -21,6 +37,18 @@
 			 "directory => '" directory "', "
 			 "filetype => " (file-type-filetype file-type) ");"
 			 ))
+
+(defn render-header [datapump-operation {:keys [remote-link file-prefix directory]}]
+	(str/join "\n"
+						["declare"
+						 "handle number;"
+						 "job_state varchar2(50);"
+						 "begin"
+						 (str "handle := dbms_datapump.open('" (render-datapump-operation datapump-operation) "', 'SCHEMA'"
+									(if (nil? remote-link) "" (str ", remote_link => " (single-quote remote-link))) ");")
+						 (render-add-file directory :dump-file file-prefix)
+						 (render-add-file directory (log-file-type datapump-operation) file-prefix)
+						 ]))
 
 (defn render-footer []
 	(str/join "\n"

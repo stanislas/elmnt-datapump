@@ -1,14 +1,7 @@
 (ns ch.hood.odpg.impl.expdp
 	(:require [ch.hood.odpg.impl.common :as c]
 						[clojure.string :as str]
-						[schema.core :as s])
-	(:import (java.util Calendar)))
-
-(defn double-quote [string]
-	(str "''" string "''"))
-
-(defn single-quote [string]
-	(str "'" string "'"))
+						[schema.core :as s]))
 
 (def ExpData
 	{:schemas                      {s/Str {(s/optional-key :include-tables)    #{s/Str}
@@ -21,7 +14,7 @@
 
 (defn render-schema-metadatafilter [schemas]
 	(let [schema-names (keys schemas)
-				schema-names (map double-quote schema-names)
+				schema-names (map c/double-quote schema-names)
 				schema-names (str/join ", " schema-names)]
 		(str "dbms_datapump.metadata_filter("
 				 "handle => handle, "
@@ -36,7 +29,7 @@
 
 (defn render-table-metadatafile
 	([filter-type table-names]
-	 (let [table-names (map double-quote table-names)
+	 (let [table-names (map c/double-quote table-names)
 				 table-names (str/join ", " table-names)]
 		 (str "dbms_datapump.metadata_filter("
 					"handle => handle, "
@@ -74,24 +67,6 @@
 		(str metadata-schema-filter "\n" table-metadata-filter "\n"
 				 (str/join "\n" data-filters))))
 
-(defn render-today []
-	(let [cal (Calendar/getInstance)]
-		(str (.get cal Calendar/YEAR) "_"
-				 (.get cal Calendar/MONTH) "_"
-				 (.get cal Calendar/DAY_OF_MONTH))))
-
-(defn render-header [{:keys [remote-link file-prefix directory]}]
-	(str/join "\n"
-						["declare"
-						 "handle number;"
-						 "job_state varchar2(50);"
-						 "begin"
-						 (str "handle := dbms_datapump.open('EXPORT', 'SCHEMA'"
-									(if (nil? remote-link) "" (str ", remote_link => " (single-quote remote-link))) ");")
-						 (c/render-add-file directory :dump-file file-prefix)
-						 (c/render-add-file directory :exp-log-file file-prefix)
-						 ]))
-
 (defn validate [exp-data]
 	(let [schemas (:schemas exp-data)
 				schema-count (-> schemas keys count)
@@ -105,7 +80,7 @@
 	([exp-data :- ExpData]
 		(validate exp-data)
 		(str/join "\n"
-							[(render-header exp-data)
+							[(c/render-header :export exp-data)
 							 (render-schemas exp-data)
 							 (c/render-footer)]))
 	([file exp-data :- ExpData]
