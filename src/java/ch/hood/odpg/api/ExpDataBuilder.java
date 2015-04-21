@@ -1,11 +1,11 @@
 package ch.hood.odpg.api;
 
-import ch.hood.odpg.api.fluid.Directory;
-import ch.hood.odpg.api.fluid.FilePrefix;
-import ch.hood.odpg.api.fluid.Render;
-import ch.hood.odpg.api.fluid.SchemaChoice;
-import ch.hood.odpg.api.fluid.Schemas;
-import ch.hood.odpg.api.fluid.SchemasOrRemoteLink;
+import ch.hood.odpg.api.expfluent.Directory;
+import ch.hood.odpg.api.expfluent.FilePrefix;
+import ch.hood.odpg.api.expfluent.Render;
+import ch.hood.odpg.api.expfluent.SchemaChoice;
+import ch.hood.odpg.api.expfluent.Schemas;
+import ch.hood.odpg.api.expfluent.SchemasOrRemoteLink;
 import clojure.java.api.Clojure;
 import clojure.lang.IFn;
 import clojure.lang.IPersistentMap;
