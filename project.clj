@@ -1,5 +1,5 @@
 (defproject
-	ch.hood/oracle-datapump-pkg-gen "0.2.1"
+	ch.hood/oracle-datapump-pkg-gen "0.3.0"
 	:description "FIXME: write description"
 	:url "http://example.com/FIXME"
 	:license {:name "Eclipse Public License"
