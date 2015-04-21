@@ -25,20 +25,16 @@ public class ExpDataBuilder implements Directory, FilePrefix, Render, SchemaChoi
 
 	public static final String CH_HOOD_ODPG_IMPL_EXPDP = "ch.hood.odpg.impl.expdp";
 
-	public static final Keyword SCHEMAS = keyword(":schemas");
 	public static final Keyword INCLUDE_TABLES = keyword(":include-tables");
 	public static final Keyword EXCLUDE_TABLES = keyword(":exclude-tables");
 	public static final Keyword SUBQUERY_FILTERS = keyword(":subquery-filters");
 	public static final Keyword PARTITION_FILTERS = keyword(":partition-filters");
-	public static final Keyword FILE_PREFIX = keyword(":file-prefix");
-	public static final Keyword DIRECTORY = keyword(":directory");
 	public static final Keyword REMOTE_LINK = keyword(":remote-link");
 
 	private IPersistentMap expData;
 
 	static {
-		IFn require = Clojure.var("clojure.core", "require");
-		require.invoke(Clojure.read(CH_HOOD_ODPG_IMPL_EXPDP));
+		ClojureUtils.requireNamespace(CH_HOOD_ODPG_IMPL_EXPDP);
 		RENDER_EXP_SCRIPT = Clojure.var(CH_HOOD_ODPG_IMPL_EXPDP, "render-exp-script");
 	}
 
@@ -48,7 +44,7 @@ public class ExpDataBuilder implements Directory, FilePrefix, Render, SchemaChoi
 
 	private ExpDataBuilder() {
 		expData = PersistentHashMap.EMPTY;
-		expData = expData.assoc(SCHEMAS, PersistentHashMap.EMPTY);
+		expData = expData.assoc(Common.SCHEMAS, PersistentHashMap.EMPTY);
 	}
 
 	@Override
@@ -63,13 +59,13 @@ public class ExpDataBuilder implements Directory, FilePrefix, Render, SchemaChoi
 
 	@Override
 	public Directory withFilePrefix(String filePrefix) {
-		expData = expData.assoc(FILE_PREFIX, filePrefix);
+		expData = expData.assoc(Common.FILE_PREFIX, filePrefix);
 		return this;
 	}
 
 	@Override
 	public SchemasOrRemoteLink withDirectory(String directory) {
-		expData = expData.assoc(DIRECTORY, directory);
+		expData = expData.assoc(Common.DIRECTORY, directory);
 		return this;
 	}
 
@@ -83,7 +79,7 @@ public class ExpDataBuilder implements Directory, FilePrefix, Render, SchemaChoi
 	public Schemas addSchema(String schemaName, Map<String, String> subqueryFilters) {
 		IPersistentMap pSubqueryFilters = PersistentHashMap.create(subqueryFilters);
 		PersistentHashMap schema = PersistentHashMap.create(SUBQUERY_FILTERS, pSubqueryFilters);
-		expData = assocNewSchema(schemaName, schema);
+		expData = Common.assocNewSchema(expData, schemaName, schema);
 		return this;
 	}
 
@@ -93,7 +89,7 @@ public class ExpDataBuilder implements Directory, FilePrefix, Render, SchemaChoi
 		IPersistentMap schema = PersistentHashMap.create(SUBQUERY_FILTERS, pSubqueryFilters);
 		schema = assocTableList(schema, INCLUDE_TABLES, includeTables);
 		schema = assocTableList(schema, EXCLUDE_TABLES, excludeTables);
-		expData = assocNewSchema(schemaName, schema);
+		expData = Common.assocNewSchema(expData, schemaName, schema);
 		return this;
 	}
 
@@ -103,12 +99,6 @@ public class ExpDataBuilder implements Directory, FilePrefix, Render, SchemaChoi
 			return schema.assoc(keyword, tableSet);
 		}
 		return schema;
-	}
-
-	private IPersistentMap assocNewSchema(String schemaName, IPersistentMap schema) {
-		IPersistentMap schemas = (IPersistentMap) expData.valAt(SCHEMAS);
-		schemas = schemas.assoc(schemaName, schema);
-		return expData.assoc(SCHEMAS, schemas);
 	}
 
 }
