@@ -2,6 +2,7 @@ package ch.hood.odpg.api;
 
 import ch.hood.odpg.api.impfluent.Directory;
 import ch.hood.odpg.api.impfluent.FilePrefix;
+import ch.hood.odpg.api.impfluent.MetadataFilter;
 import ch.hood.odpg.api.impfluent.Render;
 import ch.hood.odpg.api.impfluent.Schemas;
 import ch.hood.odpg.api.impfluent.TablespacesRemap;
@@ -10,11 +11,13 @@ import clojure.lang.IFn;
 import clojure.lang.IPersistentMap;
 import clojure.lang.Keyword;
 import clojure.lang.PersistentHashMap;
+import clojure.lang.PersistentVector;
 
 import java.io.File;
+import java.util.List;
 import java.util.Map;
 
-public class ImpDataBuilder implements FilePrefix, Directory, TablespacesRemap, Schemas, Render {
+public class ImpDataBuilder implements FilePrefix, Directory, MetadataFilter, TablespacesRemap, Schemas, Render {
 
 	public static final IFn RENDER_IMP_SCRIPT;
 
@@ -46,8 +49,20 @@ public class ImpDataBuilder implements FilePrefix, Directory, TablespacesRemap, 
 	}
 
 	@Override
-	public TablespacesRemap withDirectory(String directory) {
+	public MetadataFilter withDirectory(String directory) {
 		impData = impData.assoc(Common.DIRECTORY, directory);
+		return this;
+	}
+
+	@Override
+	public TablespacesRemap includeObjectTypes(List<String> objectTypes) {
+		impData = impData.assoc(Common.INCLUDE_OBJECT_TYPES, PersistentVector.create(objectTypes));
+		return this;
+	}
+
+	@Override
+	public TablespacesRemap excludeObjectTypes(List<String> objectTypes) {
+		impData = impData.assoc(Common.EXCLUDE_OBJECT_TYPES, PersistentVector.create(objectTypes));
 		return this;
 	}
 
@@ -59,7 +74,7 @@ public class ImpDataBuilder implements FilePrefix, Directory, TablespacesRemap, 
 
 	@Override
 	public Render withSchemas(Map<String, String> schemasWithOptionalRemap) {
-		for(String schemaName : schemasWithOptionalRemap.keySet()) {
+		for (String schemaName : schemasWithOptionalRemap.keySet()) {
 			IPersistentMap schema = PersistentHashMap.EMPTY;
 			String optionalRemap = schemasWithOptionalRemap.get(schemaName);
 			if (optionalRemap != null && optionalRemap.length() > 0) {
@@ -79,4 +94,6 @@ public class ImpDataBuilder implements FilePrefix, Directory, TablespacesRemap, 
 	public void render(File file) {
 		RENDER_IMP_SCRIPT.invoke(file, impData);
 	}
+
+
 }

@@ -10,8 +10,8 @@
 																									(s/optional-key :partition-filters) {s/Str s/Str}}}
 	 :file-prefix                           s/Str
 	 :directory                             s/Str
-	 (s/optional-key :exclude-object-types) [s/Keyword]
-	 (s/optional-key :include-object-types) [s/Keyword]
+	 (s/optional-key :exclude-object-types) [s/Str]
+	 (s/optional-key :include-object-types) [s/Str]
 	 (s/optional-key :remote-link)          s/Str})
 
 (defn render-subquery-datafilter [schema-name table-name subquery]

@@ -4,10 +4,12 @@
 						[ch.hood.odpg.impl.common :as c]))
 
 (def ImpData
-	{:schemas           {s/Str {(s/optional-key :remap-to) s/Str}}
-	 :tablespaces-remap {s/Str s/Str}
-	 :file-prefix       s/Str
-	 :directory         s/Str})
+	{:schemas                               {s/Str {(s/optional-key :remap-to) s/Str}}
+	 :tablespaces-remap                     {s/Str s/Str}
+	 :file-prefix                           s/Str
+	 (s/optional-key :exclude-object-types) [s/Str]
+	 (s/optional-key :include-object-types) [s/Str]
+	 :directory                             s/Str})
 
 (defn render-remap-type [remap-type]
 	(case remap-type
@@ -39,6 +41,7 @@
 							[(c/render-header :import imp-data)
 							 (render-schemas (:schemas imp-data))
 							 (render-tablespaces-remap (:tablespaces-remap imp-data))
+							 (c/render-object-type-metadatafilter imp-data)
 							 (c/render-footer)]))
 	([file imp-data :- ImpData]
 		(spit file (render-imp-script imp-data))))

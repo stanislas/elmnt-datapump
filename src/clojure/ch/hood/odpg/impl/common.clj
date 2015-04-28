@@ -80,7 +80,7 @@
 		:include-tables "IN"
 		:exclude-tables "NOT IN"
 		:include-object-types "IN"
-		:exclude-object-types "NOT IN"))
+		:exclude-object-types "IN"))
 
 (defn render-metadata-filter
 	([filter-type filters {:keys [object-type]}]

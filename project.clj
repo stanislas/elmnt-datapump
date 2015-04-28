@@ -10,6 +10,6 @@
 	:plugins [[lein-junit "1.1.8"]
 						[lein-localrepo "0.5.3"]]
 	:source-paths ["src/clojure"]
-	:java-source-paths ["src/java" "test/java"]
+	:java-source-paths ["src/java"]
 	:test-paths ["test/clojure"]
 	:junit ["test/java"])
