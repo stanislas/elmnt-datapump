@@ -35,7 +35,9 @@
 			 "handle => handle, "
 			 "filename => '" (str file-basename (file-type-suffix file-type)) "', "
 			 "directory => '" directory "', "
-			 "filetype => " (file-type-filetype file-type) ");"
+			 "filetype => " (file-type-filetype file-type)
+			 (when (= file-type :dump-file) ", reusefile => 0")
+			 ");"
 			 ))
 
 (defn render-header [datapump-operation {:keys [remote-link file-prefix directory]}]
