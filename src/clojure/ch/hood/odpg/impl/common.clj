@@ -67,3 +67,45 @@
 				 "name => 'SCHEMA_EXPR', "
 				 "value => 'IN (" schema-names ")'"
 				 ");")))
+
+(defn filter-type-name [filter-type]
+	(case filter-type
+		:include-tables "NAME_EXPR"
+		:exclude-tables "NAME_EXPR"
+		:include-object-types "INCLUDE_PATH_EXPR"
+		:exclude-object-types "EXCLUDE_PATH_EXPR"))
+
+(defn filter-type-operator [filter-type]
+	(case filter-type
+		:include-tables "IN"
+		:exclude-tables "NOT IN"
+		:include-object-types "IN"
+		:exclude-object-types "NOT IN"))
+
+(defn render-metadata-filter
+	([filter-type filters {:keys [object-type]}]
+	 (let [filters (map double-quote filters)
+				 filters (str/join ", " filters)
+				 filters (str (filter-type-operator filter-type) "(" filters ")")]
+		 (str "dbms_datapump.metadata_filter("
+					"handle => handle, "
+					"name => '" (filter-type-name filter-type) "', "
+					"value => '" filters "'"
+					(when (not (nil? object-type)) (str ", object_type => '" object-type "'"))
+					");")))
+	([data {:keys [filter-types] :as opt}]
+	 (let [filters ((apply juxt filter-types) data)
+				 filters (map #(when (not (nil? %2)) (render-metadata-filter %1 %2 opt)) filter-types filters)
+				 filters (filter (comp not nil?) filters)]
+		 (str/join "\n" filters))))
+
+(defn render-table-metadatafilter
+	[schemas]
+	;; if we come here, we have the guarantee of a single schema mode. see validate.
+	(render-metadata-filter (get schemas (-> schemas keys first)) {:filter-types [:include-tables :exclude-tables]
+																																 :object-type  "TABLES"}))
+
+(defn render-object-type-metadatafilter
+	[data]
+	(render-metadata-filter data {:filter-types [:include-object-types :exclude-object-types]}))
+
