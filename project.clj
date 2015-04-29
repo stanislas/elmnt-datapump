@@ -1,5 +1,5 @@
 (defproject
-	ch.hood/oracle-datapump-pkg-gen "0.4.1"
+	ch.hood/oracle-datapump-pkg-gen "0.5.0"
 	:description "FIXME: write description"
 	:url "http://example.com/FIXME"
 	:license {:name "Eclipse Public License"
@@ -12,4 +12,5 @@
 	:source-paths ["src/clojure"]
 	:java-source-paths ["src/java"]
 	:test-paths ["test/clojure"]
+	:java-test-paths ["test/java"]
 	:junit ["test/java"])

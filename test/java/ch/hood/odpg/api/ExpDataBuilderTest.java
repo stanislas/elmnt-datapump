@@ -23,7 +23,7 @@ public class ExpDataBuilderTest {
 		subqueryFilters.put("LC_CONFIGURATION", "WHERE CUSTOMER_ID = 1000");
 		String rendered = ExpDataBuilder.builder()
 			.withFilePrefix("simon1")
-			.withDirectory("DATA_PUMP_DIR")
+			.withDirectory("DATA_PUMP_DIR", true)
 			.withSchema("SIMON1", includeTables, excludeTables, subqueryFilters)
 			.render();
 		assertNotNull(rendered);

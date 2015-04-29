@@ -10,6 +10,7 @@
 																									(s/optional-key :partition-filters) {s/Str s/Str}}}
 	 :file-prefix                           s/Str
 	 :directory                             s/Str
+	 (s/optional-key :reuse-dump-file)      s/Bool
 	 (s/optional-key :exclude-object-types) [s/Str]
 	 (s/optional-key :include-object-types) [s/Str]
 	 (s/optional-key :remote-link)          s/Str})
@@ -66,7 +67,8 @@
 																											 "LC_CONFIGURATION" "WHERE CUSTOMER_ID = 3600233"}}}
 							:exclude-object-types ["VIEW"]
 							:file-prefix          "simon1"
-							:directory            "DATA_PUMP_DIR"})
+							:directory            "DATA_PUMP_DIR"
+							:reuse-dump-file      true})
 
 
 	(println (render-exp-script input))

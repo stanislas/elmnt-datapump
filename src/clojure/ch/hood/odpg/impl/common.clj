@@ -30,17 +30,17 @@
 		:imp-log-file "dbms_datapump.KU$_FILE_TYPE_LOG_FILE"
 		:dump-file "dbms_datapump.KU$_FILE_TYPE_DUMP_FILE"))
 
-(defn render-add-file [directory file-type file-basename]
+(defn render-add-file [directory file-type file-basename reuse-dump-file]
 	(str "dbms_datapump.add_file("
 			 "handle => handle, "
 			 "filename => '" (str file-basename (file-type-suffix file-type)) "', "
 			 "directory => '" directory "', "
 			 "filetype => " (file-type-filetype file-type)
-			 (when (= file-type :dump-file) ", reusefile => 0")
+			 (when (= file-type :dump-file) (str ", reusefile => " (if reuse-dump-file 1 0)))
 			 ");"
 			 ))
 
-(defn render-header [datapump-operation {:keys [remote-link file-prefix directory]}]
+(defn render-header [datapump-operation {:keys [remote-link file-prefix directory reuse-dump-file]}]
 	(str/join "\n"
 						["declare"
 						 "handle number;"
@@ -48,8 +48,8 @@
 						 "begin"
 						 (str "handle := dbms_datapump.open('" (render-datapump-operation datapump-operation) "', 'SCHEMA'"
 									(if (nil? remote-link) "" (str ", remote_link => " (single-quote remote-link))) ");")
-						 (render-add-file directory :dump-file file-prefix)
-						 (render-add-file directory (log-file-type datapump-operation) file-prefix)
+						 (render-add-file directory :dump-file file-prefix reuse-dump-file)
+						 (render-add-file directory (log-file-type datapump-operation) file-prefix reuse-dump-file)
 						 ]))
 
 (defn render-footer []

@@ -9,6 +9,7 @@ public final class Common {
 
 	public static final Keyword SCHEMAS = keyword(":schemas");
 	public static final Keyword DIRECTORY = keyword(":directory");
+	public static final Keyword REUSE_DUMP_FILE = keyword(":reuse-dump-file");
 	public static final Keyword FILE_PREFIX = keyword(":file-prefix");
 	public static final Keyword EXCLUDE_OBJECT_TYPES = keyword(":exclude-object-types");
 	public static final Keyword INCLUDE_OBJECT_TYPES = keyword(":include-object-types");

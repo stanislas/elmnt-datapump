@@ -64,8 +64,9 @@ public class ExpDataBuilder implements Directory, FilePrefix, Render, SchemaChoi
 	}
 
 	@Override
-	public SchemasOrRemoteLink withDirectory(String directory) {
+	public SchemasOrRemoteLink withDirectory(String directory, boolean reuseDumpFile) {
 		expData = expData.assoc(Common.DIRECTORY, directory);
+		expData = expData.assoc(Common.REUSE_DUMP_FILE, reuseDumpFile);
 		return this;
 	}
 
