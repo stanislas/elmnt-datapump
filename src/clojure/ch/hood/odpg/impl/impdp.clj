@@ -7,6 +7,7 @@
 	{:schemas                               {s/Str {(s/optional-key :remap-to) s/Str}}
 	 :tablespaces-remap                     {s/Str s/Str}
 	 :file-prefix                           s/Str
+	 (s/optional-key :sqlplus?)             s/Bool
 	 (s/optional-key :exclude-object-types) [s/Str]
 	 (s/optional-key :include-object-types) [s/Str]
 	 :directory                             s/Str})
@@ -42,7 +43,7 @@
 							 (render-schemas (:schemas imp-data))
 							 (render-tablespaces-remap (:tablespaces-remap imp-data))
 							 (c/render-object-type-metadatafilter imp-data)
-							 (c/render-footer)]))
+							 (c/render-footer (get imp-data :sqlplus? true))]))
 	([file imp-data :- ImpData]
 		(spit file (render-imp-script imp-data))))
 

@@ -8,6 +8,6 @@
 (defn header [type]
 	(str "create or replace " (render-pkg-type type) " is"))
 
-(defn footer []
-	"end;\n/")
+(defn footer [sqlplus?]
+	(str "end;\n" (when sqlplus? "/\n")))
 

@@ -48,13 +48,25 @@ public class ExpDataBuilder implements Directory, FilePrefix, Render, SchemaChoi
 	}
 
 	@Override
-	public String render() {
+	public String render(boolean sqlplus) {
+		expData = expData.assoc(Common.SQLPLUS, sqlplus);
 		return (String) RENDER_EXP_SCRIPT.invoke(expData);
 	}
 
 	@Override
-	public void render(File file) {
+	public void render(File file, boolean sqlplus) {
+		expData = expData.assoc(Common.SQLPLUS, sqlplus);
 		RENDER_EXP_SCRIPT.invoke(file, expData);
+	}
+
+	@Override
+	public String render() {
+		return render(true);
+	}
+
+	@Override
+	public void render(File file) {
+		render(file, true);
 	}
 
 	@Override

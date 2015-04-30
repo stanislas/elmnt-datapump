@@ -86,14 +86,24 @@ public class ImpDataBuilder implements FilePrefix, Directory, MetadataFilter, Ta
 	}
 
 	@Override
-	public String render() {
+	public String render(boolean sqlplus) {
+		impData = impData.assoc(Common.SQLPLUS, sqlplus);
 		return (String) RENDER_IMP_SCRIPT.invoke(impData);
 	}
 
 	@Override
-	public void render(File file) {
+	public void render(File file, boolean sqlplus) {
+		impData = impData.assoc(Common.SQLPLUS, sqlplus);
 		RENDER_IMP_SCRIPT.invoke(file, impData);
 	}
 
+	@Override
+	public String render() {
+		return render(true);
+	}
 
+	@Override
+	public void render(File file) {
+		render(file, true);
+	}
 }

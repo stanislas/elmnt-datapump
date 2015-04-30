@@ -11,6 +11,7 @@
 	 :file-prefix                           s/Str
 	 :directory                             s/Str
 	 (s/optional-key :reuse-dump-file)      s/Bool
+	 (s/optional-key :sqlplus?)             s/Bool
 	 (s/optional-key :exclude-object-types) [s/Str]
 	 (s/optional-key :include-object-types) [s/Str]
 	 (s/optional-key :remote-link)          s/Str})
@@ -53,7 +54,7 @@
 							[(c/render-header :export exp-data)
 							 (c/render-object-type-metadatafilter exp-data)
 							 (render-schemas exp-data)
-							 (c/render-footer)]))
+							 (c/render-footer (get exp-data :sqlplus? true))]))
 	([file exp-data :- ExpData]
 		(let [script (render-exp-script exp-data)]
 			(spit file script))))

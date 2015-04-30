@@ -52,13 +52,13 @@
 						 (render-add-file directory (log-file-type datapump-operation) file-prefix reuse-dump-file)
 						 ]))
 
-(defn render-footer []
+(defn render-footer [sqlplus?]
 	(str/join "\n"
 						["dbms_datapump.start_job(handle => handle);"
 						 "dbms_datapump.wait_for_job(handle => handle, job_state => job_state);"
 						 "dbms_output.put_line('Job finished with state ' || job_state);"
-						 "end;"
-						 "/"]))
+						 (str "end;\n" (when sqlplus? "/\n"))
+						 ]))
 
 (defn render-schema-metadatafilter [schemas]
 	(let [schema-names (keys schemas)
