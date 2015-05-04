@@ -12,12 +12,14 @@ import clojure.lang.IPersistentMap;
 import clojure.lang.Keyword;
 import clojure.lang.PersistentHashMap;
 import clojure.lang.PersistentHashSet;
+import clojure.lang.PersistentVector;
 
 import java.io.File;
 import java.util.List;
 import java.util.Map;
 
 import static ch.hood.odpg.api.ClojureUtils.keyword;
+import static ch.hood.odpg.api.Common.CUSTOM;
 
 public class ExpDataBuilder implements Directory, FilePrefix, Render, SchemaChoice, Schemas, SchemasOrRemoteLink {
 
@@ -28,7 +30,7 @@ public class ExpDataBuilder implements Directory, FilePrefix, Render, SchemaChoi
 	public static final Keyword INCLUDE_TABLES = keyword(":include-tables");
 	public static final Keyword EXCLUDE_TABLES = keyword(":exclude-tables");
 	public static final Keyword SUBQUERY_FILTERS = keyword(":subquery-filters");
-	public static final Keyword PARTITION_FILTERS = keyword(":partition-filters");
+	public static final Keyword PARTITION_LIST_FILTERS = keyword(":partition-list-filters");
 	public static final Keyword REMOTE_LINK = keyword(":remote-link");
 
 	private IPersistentMap expData;
@@ -90,8 +92,15 @@ public class ExpDataBuilder implements Directory, FilePrefix, Render, SchemaChoi
 
 	@Override
 	public Schemas addSchema(String schemaName, Map<String, String> subqueryFilters) {
-		IPersistentMap pSubqueryFilters = PersistentHashMap.create(subqueryFilters);
-		PersistentHashMap schema = PersistentHashMap.create(SUBQUERY_FILTERS, pSubqueryFilters);
+		PersistentHashMap schema = PersistentHashMap.create(SUBQUERY_FILTERS, PersistentHashMap.create(subqueryFilters));
+		expData = Common.assocNewSchema(expData, schemaName, schema);
+		return this;
+	}
+
+	@Override
+	public Schemas addSchema(String schemaName, Map<String, List<String>> partitionLists, Map<String, String> tableSubqueries) {
+		IPersistentMap schema = PersistentHashMap.create(SUBQUERY_FILTERS, PersistentHashMap.create(tableSubqueries));
+		schema = schema.assoc(PARTITION_LIST_FILTERS, PersistentHashMap.create(partitionLists));
 		expData = Common.assocNewSchema(expData, schemaName, schema);
 		return this;
 	}
@@ -103,6 +112,12 @@ public class ExpDataBuilder implements Directory, FilePrefix, Render, SchemaChoi
 		schema = assocTableList(schema, INCLUDE_TABLES, includeTables);
 		schema = assocTableList(schema, EXCLUDE_TABLES, excludeTables);
 		expData = Common.assocNewSchema(expData, schemaName, schema);
+		return this;
+	}
+
+	@Override
+	public Render withCustomLines(List<String> customLines) {
+		expData = expData.assoc(CUSTOM, PersistentVector.create(customLines));
 		return this;
 	}
 

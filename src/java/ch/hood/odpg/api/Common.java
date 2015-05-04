@@ -14,6 +14,7 @@ public final class Common {
 	public static final Keyword EXCLUDE_OBJECT_TYPES = keyword(":exclude-object-types");
 	public static final Keyword INCLUDE_OBJECT_TYPES = keyword(":include-object-types");
 	public static final Keyword SQLPLUS = keyword(":sqlplus?");
+	public static final Keyword CUSTOM = keyword(":custom");
 
 	public static IPersistentMap assocNewSchema(IPersistentMap pmap, String schemaName, IPersistentMap schema) {
 		IPersistentMap schemas = (IPersistentMap) pmap.valAt(SCHEMAS);

@@ -1,8 +1,11 @@
 package ch.hood.odpg.api.expfluent;
 
 import java.io.File;
+import java.util.List;
 
 public interface Render {
+
+	Render withCustomLines(List<String> customLines);
 
 	String render(boolean sqlplus);
 

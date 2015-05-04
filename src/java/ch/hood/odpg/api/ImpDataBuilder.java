@@ -17,6 +17,8 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
+import static ch.hood.odpg.api.Common.CUSTOM;
+
 public class ImpDataBuilder implements FilePrefix, Directory, MetadataFilter, TablespacesRemap, Schemas, Render {
 
 	public static final IFn RENDER_IMP_SCRIPT;
@@ -82,6 +84,12 @@ public class ImpDataBuilder implements FilePrefix, Directory, MetadataFilter, Ta
 			}
 			impData = Common.assocNewSchema(impData, schemaName, schema);
 		}
+		return this;
+	}
+
+	@Override
+	public Render withCustomLines(List<String> customLines) {
+		impData = impData.assoc(CUSTOM, PersistentVector.create(customLines));
 		return this;
 	}
 
