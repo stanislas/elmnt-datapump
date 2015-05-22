@@ -1,5 +1,5 @@
 (defproject
-	li.elmnt/elmnt "0.6.0"
+	li.elmnt/datapump "0.6.0"
 	:description "FIXME: write description"
 	:url "http://example.com/FIXME"
 	:license {:name "Eclipse Public License"
