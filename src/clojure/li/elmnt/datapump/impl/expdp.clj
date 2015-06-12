@@ -8,8 +8,10 @@
                                                   (s/optional-key :exclude-tables)         #{s/Str}
                                                   (s/optional-key :subquery-filters)       {s/Str s/Str}
                                                   (s/optional-key :partition-list-filters) {s/Str [s/Str]}}}
-   :file-prefix                           s/Str
    :directory                             s/Str
+   :dump-file                             s/Str
+   :log-file                              s/Str
+   (s/optional-key :file-prefix)        s/Str
    (s/optional-key :reuse-dump-file)      s/Bool
    (s/optional-key :sqlplus?)             s/Bool
    (s/optional-key :exclude-object-types) [s/Str]
@@ -60,7 +62,7 @@
       (throw (IllegalArgumentException. ":tables filter is allowed only on single schema exp-data.")))
     exp-data))
 
-(s/defn render-exp-script
+(s/defn render-exp-script-strict
   ([exp-data :- ExpData]
     (validate exp-data)
     (str/join "\n"
@@ -70,8 +72,14 @@
                (str/join "\n" (:custom exp-data))
                (c/render-footer (get exp-data :sqlplus? true))]))
   ([file exp-data :- ExpData]
-    (let [script (render-exp-script exp-data)]
+    (let [script (render-exp-script-strict exp-data)]
       (spit file script))))
+
+(defn render-exp-script
+  ([exp-data]
+    (c/normalize exp-data :export render-exp-script-strict))
+  ([file exp-data]
+    (c/normalize exp-data :export (partial render-exp-script-strict file))))
 
 (comment
   (def input {:schemas              {"SIMON1"
@@ -83,7 +91,7 @@
                                       :partition-list-filters {"T1" ["SYS1" "SYS2"]
                                                                "T2" ["SYS3" "SYS4"]}}}
               :exclude-object-types ["VIEW"]
-              :file-prefix          "simon1"
+              :file-prefix        "simon1"
               :directory            "DATA_PUMP_DIR"
               :reuse-dump-file      true})
 

@@ -6,7 +6,7 @@
 (def ImpData
   {:schemas                               {s/Str {(s/optional-key :remap-to) s/Str}}
    :tablespaces-remap                     {s/Str s/Str}
-   :file-prefix                           s/Str
+   :file-prefix                         s/Str
    (s/optional-key :sqlplus?)             s/Bool
    (s/optional-key :exclude-object-types) [s/Str]
    (s/optional-key :include-object-types) [s/Str]
@@ -37,7 +37,7 @@
   (str/join "\n"
             (map #(render-remap :remap-tablespace %) tablespaces-remap)))
 
-(s/defn render-imp-script
+(s/defn render-imp-script-strict
   ([imp-data :- ImpData]
     (str/join "\n"
               [(c/render-header :import imp-data)
@@ -47,11 +47,17 @@
                (str/join "\n" (:custom imp-data))
                (c/render-footer (get imp-data :sqlplus? true))]))
   ([file imp-data :- ImpData]
-    (spit file (render-imp-script imp-data))))
+    (spit file (render-imp-script-strict imp-data))))
+
+(defn render-imp-script
+  ([imp-data]
+    (c/normalize imp-data :import render-imp-script-strict))
+  ([file imp-data]
+    (c/normalize imp-data :import (partial render-imp-script-strict file))))
 
 (comment
   (def imp-data {:directory         "DATA_PUMP_DIR"
-                 :file-prefix       "arims_2015_3_20"
+                 :file-prefix     "arims_2015_3_20"
                  :tablespaces-remap {"SIMON1_DATA" "STAN1_DATA"}
                  :schemas           {"SIMON1" {:remap-to "STAN1"}}})
 
