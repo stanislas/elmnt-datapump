@@ -1,11 +1,11 @@
-package li.elmnt.datapump.api;
+package li.elmnt.datapump;
 
-import li.elmnt.datapump.api.expfluent.Directory;
-import li.elmnt.datapump.api.expfluent.FilePrefix;
-import li.elmnt.datapump.api.expfluent.Render;
-import li.elmnt.datapump.api.expfluent.SchemaChoice;
-import li.elmnt.datapump.api.expfluent.Schemas;
-import li.elmnt.datapump.api.expfluent.SchemasOrRemoteLink;
+import li.elmnt.datapump.expfluent.FilePrefix;
+import li.elmnt.datapump.expfluent.SchemaChoice;
+import li.elmnt.datapump.expfluent.SchemasOrRemoteLink;
+import li.elmnt.datapump.expfluent.Directory;
+import li.elmnt.datapump.expfluent.Render;
+import li.elmnt.datapump.expfluent.Schemas;
 import clojure.java.api.Clojure;
 import clojure.lang.IFn;
 import clojure.lang.IPersistentMap;
@@ -18,13 +18,13 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-import static li.elmnt.datapump.api.Common.CUSTOM;
+import static li.elmnt.datapump.Common.CUSTOM;
 
 public class ExpDataBuilder implements Directory, FilePrefix, Render, SchemaChoice, Schemas, SchemasOrRemoteLink {
 
 	public static final IFn RENDER_EXP_SCRIPT;
 
-	public static final String CH_HOOD_ODPG_IMPL_EXPDP = "li.elmnt.datapump.impl.expdp";
+	public static final String ELMNT_DATAPUMP_EXPDP = "elmnt.datapump.expdp";
 
 	public static final Keyword INCLUDE_TABLES = ClojureUtils.keyword(":include-tables");
 	public static final Keyword EXCLUDE_TABLES = ClojureUtils.keyword(":exclude-tables");
@@ -35,8 +35,8 @@ public class ExpDataBuilder implements Directory, FilePrefix, Render, SchemaChoi
 	private IPersistentMap expData;
 
 	static {
-		ClojureUtils.requireNamespace(CH_HOOD_ODPG_IMPL_EXPDP);
-		RENDER_EXP_SCRIPT = Clojure.var(CH_HOOD_ODPG_IMPL_EXPDP, "render-exp-script");
+		ClojureUtils.requireNamespace(ELMNT_DATAPUMP_EXPDP);
+		RENDER_EXP_SCRIPT = Clojure.var(ELMNT_DATAPUMP_EXPDP, "render-exp-script");
 	}
 
 	public static FilePrefix builder() {

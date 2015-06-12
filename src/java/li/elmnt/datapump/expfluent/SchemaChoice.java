@@ -1,4 +1,4 @@
-package li.elmnt.datapump.api.expfluent;
+package li.elmnt.datapump.expfluent;
 
 import java.util.List;
 import java.util.Map;

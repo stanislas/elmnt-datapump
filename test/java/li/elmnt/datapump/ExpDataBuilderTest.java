@@ -1,4 +1,4 @@
-package li.elmnt.datapump.api;
+package li.elmnt.datapump;
 
 import org.junit.Test;
 

@@ -1,7 +1,7 @@
-(ns li.elmnt.datapump.impl.impdp
+(ns elmnt.datapump.impdp
   (:require [schema.core :as s]
             [clojure.string :as str]
-            [li.elmnt.datapump.impl.common :as c]))
+            [elmnt.datapump.common :as c]))
 
 (def ImpData
   {:schemas                               {s/Str {(s/optional-key :remap-to) s/Str}}

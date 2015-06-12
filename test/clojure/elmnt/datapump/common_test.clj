@@ -1,7 +1,7 @@
-(ns li.elmnt.datapump.impl.common-test
+(ns elmnt.datapump.common-test
   (:require
-    [li.elmnt.datapump.impl.common :as c]
-    [midje.sweet :refer :all]))
+    [midje.sweet :refer :all]
+    [elmnt.datapump.common :as c]))
 
 (defn statement [test-fn statement]
   (str (-> test-fn meta :name) " " statement))

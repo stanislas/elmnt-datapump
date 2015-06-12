@@ -1,4 +1,4 @@
-package li.elmnt.datapump.api.impfluent;
+package li.elmnt.datapump.impfluent;
 
 import java.util.List;
 

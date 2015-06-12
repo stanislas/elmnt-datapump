@@ -1,5 +1,5 @@
-(ns li.elmnt.datapump.impl.expdp
-  (:require [li.elmnt.datapump.impl.common :as c]
+(ns elmnt.datapump.expdp
+  (:require [elmnt.datapump.common :as c]
             [clojure.string :as str]
             [schema.core :as s]))
 

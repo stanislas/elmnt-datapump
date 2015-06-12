@@ -1,4 +1,4 @@
-package li.elmnt.datapump.api;
+package li.elmnt.datapump;
 
 import clojure.lang.IPersistentMap;
 import clojure.lang.Keyword;

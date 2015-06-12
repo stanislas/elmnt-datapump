@@ -1,11 +1,11 @@
-package li.elmnt.datapump.api;
+package li.elmnt.datapump;
 
-import li.elmnt.datapump.api.impfluent.Directory;
-import li.elmnt.datapump.api.impfluent.FilePrefix;
-import li.elmnt.datapump.api.impfluent.MetadataFilter;
-import li.elmnt.datapump.api.impfluent.Render;
-import li.elmnt.datapump.api.impfluent.Schemas;
-import li.elmnt.datapump.api.impfluent.TablespacesRemap;
+import li.elmnt.datapump.impfluent.Directory;
+import li.elmnt.datapump.impfluent.FilePrefix;
+import li.elmnt.datapump.impfluent.MetadataFilter;
+import li.elmnt.datapump.impfluent.Render;
+import li.elmnt.datapump.impfluent.Schemas;
+import li.elmnt.datapump.impfluent.TablespacesRemap;
 import clojure.java.api.Clojure;
 import clojure.lang.IFn;
 import clojure.lang.IPersistentMap;
@@ -17,20 +17,20 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-import static li.elmnt.datapump.api.Common.CUSTOM;
+import static li.elmnt.datapump.Common.CUSTOM;
 
 public class ImpDataBuilder implements FilePrefix, Directory, MetadataFilter, TablespacesRemap, Schemas, Render {
 
 	public static final IFn RENDER_IMP_SCRIPT;
 
-	public static final String CH_HOOD_ODPG_IMPL_IMPDP = "li.elmnt.datapump.impl.impdp";
+	public static final String ELMNT_DATAPUMP_IMPDP = "elmnt.datapump.impdp";
 
 	public static final Keyword TABLESPACES_REMAP = ClojureUtils.keyword(":tablespaces-remap");
 	public static final Keyword REMAP_TO = ClojureUtils.keyword(":remap-to");
 
 	static {
-		ClojureUtils.requireNamespace(CH_HOOD_ODPG_IMPL_IMPDP);
-		RENDER_IMP_SCRIPT = Clojure.var(CH_HOOD_ODPG_IMPL_IMPDP, "render-imp-script");
+		ClojureUtils.requireNamespace(ELMNT_DATAPUMP_IMPDP);
+		RENDER_IMP_SCRIPT = Clojure.var(ELMNT_DATAPUMP_IMPDP, "render-imp-script");
 	}
 
 	public static FilePrefix builder() {

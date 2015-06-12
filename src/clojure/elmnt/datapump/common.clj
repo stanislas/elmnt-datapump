@@ -1,4 +1,4 @@
-(ns li.elmnt.datapump.impl.common
+(ns elmnt.datapump.common
   (:require [clojure.string :as str]))
 
 (defn double-quote [string]
