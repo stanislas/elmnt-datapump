@@ -1,11 +1,5 @@
 package li.elmnt.datapump;
 
-import li.elmnt.datapump.expfluent.FilePrefix;
-import li.elmnt.datapump.expfluent.SchemaChoice;
-import li.elmnt.datapump.expfluent.SchemasOrRemoteLink;
-import li.elmnt.datapump.expfluent.Directory;
-import li.elmnt.datapump.expfluent.Render;
-import li.elmnt.datapump.expfluent.Schemas;
 import clojure.java.api.Clojure;
 import clojure.lang.IFn;
 import clojure.lang.IPersistentMap;
@@ -13,6 +7,11 @@ import clojure.lang.Keyword;
 import clojure.lang.PersistentHashMap;
 import clojure.lang.PersistentHashSet;
 import clojure.lang.PersistentVector;
+import li.elmnt.datapump.common.FileSpec;
+import li.elmnt.datapump.expfluent.Render;
+import li.elmnt.datapump.expfluent.SchemaChoice;
+import li.elmnt.datapump.expfluent.Schemas;
+import li.elmnt.datapump.expfluent.SchemasOrRemoteLink;
 
 import java.io.File;
 import java.util.List;
@@ -20,7 +19,7 @@ import java.util.Map;
 
 import static li.elmnt.datapump.Common.CUSTOM;
 
-public class ExpDataBuilder implements Directory, FilePrefix, Render, SchemaChoice, Schemas, SchemasOrRemoteLink {
+public class ExpDataBuilder implements Render, SchemaChoice, Schemas, SchemasOrRemoteLink {
 
 	public static final IFn RENDER_EXP_SCRIPT;
 
@@ -39,13 +38,15 @@ public class ExpDataBuilder implements Directory, FilePrefix, Render, SchemaChoi
 		RENDER_EXP_SCRIPT = Clojure.var(ELMNT_DATAPUMP_EXPDP, "render-exp-script");
 	}
 
-	public static FilePrefix builder() {
-		return new ExpDataBuilder();
+	public static SchemasOrRemoteLink exp(FileSpec fileSpec, String directory, boolean reuseDump) {
+		return new ExpDataBuilder(fileSpec, directory, reuseDump);
 	}
 
-	private ExpDataBuilder() {
-		expData = PersistentHashMap.EMPTY;
-		expData = expData.assoc(Common.SCHEMAS, PersistentHashMap.EMPTY);
+	private ExpDataBuilder(FileSpec fileSpec, String directory, boolean reuseDumpFile) {
+		expData = Common.CONFIG_WITH_EMPTY_SCHEMA;
+		expData = Common.assocFileSpec(expData, fileSpec);
+		expData = Common.assocDirectory(expData, directory);
+		expData = Common.assocReuseDumpFile(expData, reuseDumpFile);
 	}
 
 	@Override
@@ -68,19 +69,6 @@ public class ExpDataBuilder implements Directory, FilePrefix, Render, SchemaChoi
 	@Override
 	public void render(File file) {
 		render(file, true);
-	}
-
-	@Override
-	public Directory withFilePrefix(String filePrefix) {
-		expData = expData.assoc(Common.FILE_PREFIX, filePrefix);
-		return this;
-	}
-
-	@Override
-	public SchemasOrRemoteLink withDirectory(String directory, boolean reuseDumpFile) {
-		expData = expData.assoc(Common.DIRECTORY, directory);
-		expData = expData.assoc(Common.REUSE_DUMP_FILE, reuseDumpFile);
-		return this;
 	}
 
 	@Override

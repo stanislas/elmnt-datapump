@@ -1,17 +1,16 @@
 package li.elmnt.datapump;
 
-import li.elmnt.datapump.impfluent.Directory;
-import li.elmnt.datapump.impfluent.FilePrefix;
-import li.elmnt.datapump.impfluent.MetadataFilter;
-import li.elmnt.datapump.impfluent.Render;
-import li.elmnt.datapump.impfluent.Schemas;
-import li.elmnt.datapump.impfluent.TablespacesRemap;
 import clojure.java.api.Clojure;
 import clojure.lang.IFn;
 import clojure.lang.IPersistentMap;
 import clojure.lang.Keyword;
 import clojure.lang.PersistentHashMap;
 import clojure.lang.PersistentVector;
+import li.elmnt.datapump.common.FileSpec;
+import li.elmnt.datapump.impfluent.MetadataFilter;
+import li.elmnt.datapump.impfluent.Render;
+import li.elmnt.datapump.impfluent.Schemas;
+import li.elmnt.datapump.impfluent.TablespacesRemap;
 
 import java.io.File;
 import java.util.List;
@@ -19,7 +18,7 @@ import java.util.Map;
 
 import static li.elmnt.datapump.Common.CUSTOM;
 
-public class ImpDataBuilder implements FilePrefix, Directory, MetadataFilter, TablespacesRemap, Schemas, Render {
+public class ImpDataBuilder implements MetadataFilter, TablespacesRemap, Schemas, Render {
 
 	public static final IFn RENDER_IMP_SCRIPT;
 
@@ -33,27 +32,16 @@ public class ImpDataBuilder implements FilePrefix, Directory, MetadataFilter, Ta
 		RENDER_IMP_SCRIPT = Clojure.var(ELMNT_DATAPUMP_IMPDP, "render-imp-script");
 	}
 
-	public static FilePrefix builder() {
-		return new ImpDataBuilder();
+	public static MetadataFilter imp(FileSpec fileSpec, String directory) {
+		return new ImpDataBuilder(fileSpec, directory);
 	}
 
 	private IPersistentMap impData;
 
-	private ImpDataBuilder() {
-		impData = PersistentHashMap.EMPTY;
-		impData = impData.assoc(Common.SCHEMAS, PersistentHashMap.EMPTY);
-	}
-
-	@Override
-	public Directory withFilePrefix(String filePrefix) {
-		impData = impData.assoc(Common.FILE_PREFIX, filePrefix);
-		return this;
-	}
-
-	@Override
-	public MetadataFilter withDirectory(String directory) {
-		impData = impData.assoc(Common.DIRECTORY, directory);
-		return this;
+	private ImpDataBuilder(FileSpec fileSpec, String directory) {
+		impData = Common.CONFIG_WITH_EMPTY_SCHEMA;
+		impData = Common.assocFileSpec(impData, fileSpec);
+		impData = Common.assocDirectory(impData, directory);
 	}
 
 	@Override

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static li.elmnt.datapump.common.FileSpec.filePrefix;
 import static org.junit.Assert.assertNotNull;
 
 public class ExpDataBuilderTest {
@@ -21,9 +22,7 @@ public class ExpDataBuilderTest {
 		Map<String, String> subqueryFilters = new HashMap<>();
 		subqueryFilters.put("CUSTOMER", "WHERE ID = 1000");
 		subqueryFilters.put("LC_CONFIGURATION", "WHERE CUSTOMER_ID = 1000");
-		String rendered = ExpDataBuilder.builder()
-			.withFilePrefix("simon1")
-			.withDirectory("DATA_PUMP_DIR", true)
+		String rendered = ExpDataBuilder.exp(filePrefix("simon1"), "DATA_PUMP_DIR", true)
 			.withSchema("SIMON1", includeTables, excludeTables, subqueryFilters)
 			.render();
 		assertNotNull(rendered);
