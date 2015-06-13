@@ -1,5 +1,5 @@
 (defproject
-  li.elmnt/datapump "0.7.0-SNAPSHOT"
+  li.elmnt/datapump "0.7.0"
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
@@ -15,5 +15,4 @@
   :source-paths ["src/clojure"]
   :java-source-paths ["src/java"]
   :test-paths ["test/clojure"]
-  :java-test-paths ["test/java"]
   :junit ["test/java"])
